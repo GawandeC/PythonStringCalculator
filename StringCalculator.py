@@ -30,6 +30,8 @@ def add(numbers: str) -> int:
         negative_numbers = [n for n in number_list if n < 0]
         if negative_numbers:
             raise ValueError(f"Negative numbers not allowed: {','.join(map(str, negative_numbers))}")
+        # Ignore numbers larger than 1000
+        number_list = [n for n in number_list if n <= 1000]
         return sum(number_list)
     except ValueError as e:
         if "invalid literal" in str(e):
@@ -51,6 +53,8 @@ def main():
         ("//#\n2#4#6", 12), 
         ("-1,2,3", "Negative numbers not allowed: -1"),
         ("//;\n-1;2;-3", "Negative numbers not allowed: -1,-3"),
+        ("//;\n1000;1001;2", 1002),
+        ("999,1000,1001,1", 2000)
     ]
 
     for i, (input_data, expected) in enumerate(test_cases):
