@@ -9,6 +9,9 @@ def add(numbers: str) -> int:
 
     Returns:
         int: The sum of the numbers in the string. If the input is empty, returns 0.
+
+    Raises:
+        ValueError: If the input contains negative numbers, raises an exception listing all negatives.
     """
     if not numbers:
         return 0
@@ -23,11 +26,15 @@ def add(numbers: str) -> int:
     numbers = numbers.replace("\n", ",").replace(delimiter, ",")
 
     try:
-        number_list = map(int, numbers.split(","))
+        number_list = list(map(int, numbers.split(",")))
+        negative_numbers = [n for n in number_list if n < 0]
+        if negative_numbers:
+            raise ValueError(f"Negative numbers not allowed: {','.join(map(str, negative_numbers))}")
         return sum(number_list)
-    except ValueError:
-        raise ValueError("Input must be a string of numbers separated by valid delimiters.")
-
+    except ValueError as e:
+        if "invalid literal" in str(e):
+            raise ValueError("Input must be a string of numbers separated by valid delimiters.")
+        raise
 # Tests for the string calculator
 def main():
     test_cases = [
@@ -41,7 +48,9 @@ def main():
         ("5\n5,5", 15),
         ("//;\n1;2", 3),
         ("//|\n10|20|30", 60),
-        ("//#\n2#4#6", 12)
+        ("//#\n2#4#6", 12), 
+        ("-1,2,3", "Negative numbers not allowed: -1"),
+        ("//;\n-1;2;-3", "Negative numbers not allowed: -1,-3"),
     ]
 
     for i, (input_data, expected) in enumerate(test_cases):
@@ -52,7 +61,8 @@ def main():
         except AssertionError as e:
             print(e)
         except ValueError as ve:
-            print(f"Test case {i + 1} failed: {ve}")
+            assert str(ve) == expected, f"Test case {i + 1} failed: {input_data} -> {ve}"
+            print(f"Test case {i + 1} passed: {input_data} -> {ve}")
 
 if __name__ == "__main__":
     main()
