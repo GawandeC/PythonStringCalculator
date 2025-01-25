@@ -2,10 +2,10 @@
 
 def add(numbers: str) -> int:
     """
-    Calculates the sum of a string of comma-separated numbers.
+    Calculates the sum of a string of numbers with support for custom delimiters.
 
     Args:
-        numbers (str): A string containing numbers separated by commas.
+        numbers (str): A string containing numbers separated by custom delimiters, commas, or newlines.
 
     Returns:
         int: The sum of the numbers in the string. If the input is empty, returns 0.
@@ -13,13 +13,20 @@ def add(numbers: str) -> int:
     if not numbers:
         return 0
 
-    # Split the string into a list of numbers, convert to integers, and calculate the sum
+    delimiter = ","
+    if numbers.startswith("//"):
+        # Extract custom delimiter
+        delimiter_section, numbers = numbers.split("\n", 1)
+        delimiter = delimiter_section[2:]
+
+    # Replace custom delimiters and newlines with commas
+    numbers = numbers.replace("\n", ",").replace(delimiter, ",")
+
     try:
-        numbers = numbers.replace("\n", ",")
         number_list = map(int, numbers.split(","))
         return sum(number_list)
     except ValueError:
-        raise ValueError("Input must be a string of comma- or newline-separated integers.")
+        raise ValueError("Input must be a string of numbers separated by valid delimiters.")
 
 # Tests for the string calculator
 def main():
@@ -31,7 +38,10 @@ def main():
         ("10,20,30", 60),
         ("1\n2,3", 6),
         ("1\n2\n3", 6),
-        ("5\n5,5", 15)
+        ("5\n5,5", 15),
+        ("//;\n1;2", 3),
+        ("//|\n10|20|30", 60),
+        ("//#\n2#4#6", 12)
     ]
 
     for i, (input_data, expected) in enumerate(test_cases):
