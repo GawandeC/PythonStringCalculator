@@ -20,7 +20,10 @@ def add(numbers: str) -> int:
     if numbers.startswith("//"):
         # Extract custom delimiter
         delimiter_section, numbers = numbers.split("\n", 1)
-        delimiter = delimiter_section[2:]
+        if delimiter_section.startswith("//[") and delimiter_section.endswith("]"):
+            delimiter = delimiter_section[3:-1]  # Delimiters of any length
+        else:
+            delimiter = delimiter_section[2:]  # Single-character delimiter
 
     # Replace custom delimiters and newlines with commas
     numbers = numbers.replace("\n", ",").replace(delimiter, ",")
@@ -54,7 +57,11 @@ def main():
         ("-1,2,3", "Negative numbers not allowed: -1"),
         ("//;\n-1;2;-3", "Negative numbers not allowed: -1,-3"),
         ("//;\n1000;1001;2", 1002),
-        ("999,1000,1001,1", 2000)
+        ("999,1000,1001,1", 2000),
+        ("//[***]\n1***2***3", 6),
+        ("//[&&]\n5&&5&&5", 15),
+        ("//[###]\n1000###100###1", 1101)
+        
     ]
 
     for i, (input_data, expected) in enumerate(test_cases):
