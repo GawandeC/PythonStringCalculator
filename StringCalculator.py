@@ -15,10 +15,11 @@ def add(numbers: str) -> int:
 
     # Split the string into a list of numbers, convert to integers, and calculate the sum
     try:
+        numbers = numbers.replace("\n", ",")
         number_list = map(int, numbers.split(","))
         return sum(number_list)
     except ValueError:
-        raise ValueError("Input must be a string of comma-separated integers.")
+        raise ValueError("Input must be a string of comma- or newline-separated integers.")
 
 # Tests for the string calculator
 def main():
@@ -27,7 +28,10 @@ def main():
         ("1", 1),
         ("1,5", 6),
         ("2,3,10", 15),
-        ("10,20,30", 60)
+        ("10,20,30", 60),
+        ("1\n2,3", 6),
+        ("1\n2\n3", 6),
+        ("5\n5,5", 15)
     ]
 
     for i, (input_data, expected) in enumerate(test_cases):
